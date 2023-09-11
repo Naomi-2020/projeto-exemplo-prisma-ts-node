@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+ 
+model User{
+  id Int @id @default(autoincrement())
+  name String
+  email String
+  endereco String?
+  password String
+  created_at DateTime? @default(now())
+  update_at DateTime? @default(now())
+
+  @@map("users")
+  haircuts Haircut[] //usuario pode ter varios tipos de cortes de cabelo - relacionamento com tabela corte de cabelo - relacionemtn 1 para n 
+  service Service[]
+}
+
+model Haircut{
+  id Int @id @default(autoincrement())
+  name String
+  price Float
+  status Boolean @default(true)
+  created_at DateTime? @default(now())
+  update_at DateTime? @default(now())
+
+  @@map("haircuts")
+  user User @relation(fields: [user_id],references: [id])
+  user_id Int
+  services Service[]
+}
+
+model Service{
+  id Int @id @default(autoincrement())
+  customer String
+  created_at DateTime? @default(now())
+  update_at DateTime? @default(now())
+
+  @@map("services")
+  haircut Haircut @relation(fields: [haircut_id], references: [id])
+  haircut_id Int
+  user User @relation(fields: [user_id], references: [id])
+  user_id Int
+
+}
